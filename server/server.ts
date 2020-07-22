@@ -1,9 +1,12 @@
+// it's easiest to share typedefs as an ambient declaration file
+/// <reference path="./types/message.d.ts" />
+
 // signaling server - using websocket (express)
 import * as express from 'express';
 import * as expressWs from 'express-ws';
 import * as WebSocket from 'ws';
 import { createServer } from 'http';
-import * as Message from './message';
+// import * as Message from './message';
 
 // 유저 인터페이스. WebSocket객체와 이름을 담음
 interface User {
@@ -28,7 +31,7 @@ function findUserByName(name: string): User | undefined {
  다른 사람에게 메세지 forward 
  * @param sender 원래 메세지를 보낸 
 */
-function forwardMessageToOtherPerson(sender: User, message: Message.WebSocketCallMessage): void {
+function forwardMessageToOtherPerson(sender: User, message: WebSocketCallMessage): void {
     const receiver = findUserByName(message.otherPerson);
     if (!receiver) {
         // 받는 사람이 없으면 아무것도 리턴하지 x 
@@ -44,9 +47,9 @@ function forwardMessageToOtherPerson(sender: User, message: Message.WebSocketCal
 /**
  * 들어오는 message를 처리하는 function
  * @param socket : 보낸 message socket
- * @param message : message 그 대로
+ * @param message : message 그 자체
  */
-function handleMessage(socket: WebSocket, message: Message.WebSocketMessage): void {
+function handleMessage(socket: WebSocket, message: WebSocketMessage): void {
     const sender = findUserBySocket(socket) || {
         name: "[unknown]",
         socket,
