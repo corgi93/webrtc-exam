@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "importHelpers": true,
+        "module": "commonjs",
+        "noImplicitAny": true,
+        // "noUnusedLocals": true,
+        // "noUnusedParameters": true,
+        "strict": true,
+        "target": "es2017"
+    },
+    "include": [
+        "public/**/*.js",
+        "server/server.ts"
+    ]
+}
