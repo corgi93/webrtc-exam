@@ -35,15 +35,3 @@ interface WebRTCOfferWebSocketMessage {
     | WebRTCAnswerWebSocketMessage;
   
   type WebSocketMessage = LoginWebSocketMessage | WebSocketCallMessage;
-
-  // export {
-  //   LoginWebSocketMessage,
-  //   StartCallWebSocketMessage,
-  //   WebRTCIceCandidateWebSocketMessage,
-  //   WebRTCOfferWebSocketMessage,
-  //   WebRTCAnswerWebSocketMessage,
-  //   WebSocketCallMessage,
-  //   WebSocketMessage
-  // }
-  
-  

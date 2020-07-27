@@ -96,6 +96,8 @@ function handleSocketConnection(socket: WebSocket): void {
 
         // event는 버퍼 스트링이므로 object형으로 변환
         const json = JSON.parse(event.data.toString());
+        console.log(socket);
+        console.log(json);
         handleMessage(socket, json);
     });
 

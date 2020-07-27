@@ -6,7 +6,7 @@ function showElement(element) {
     element.style.display = "";
 }
 
-// 전화걸기 버튼 요소, video컨테이너 요소
+// 전화걸기 버튼 요소, video컨테이너 요소 가져오기
 const callButton = document.getElementById("call-button");
 const videoContainer = document.getElementById("video-container");
 
@@ -25,12 +25,12 @@ function showVideoCall() {
 let otherPerson;
 const username = window.prompt('당신 이름이 뭔가요?', `user${Math.floor(Math.random()*100)}`);
 const socketUrl = `ws://${location.host}/ws`;
+// webSocket 객체 생성
 const socket = new WebSocket(socketUrl);
-
 
 /** 
  *  소켓으로 메세지 전송
-    @param {WebSocketMessage} message 보낼 메세지
+    @param {WebSocketMessage} message : 보낼 메세지
 */
 function sendMessageToSignallingServer(message) {
     const json = JSON.stringify(message);
@@ -66,7 +66,7 @@ async function handleMessage(message) {
             otherPerson = message.otherPerson;
             showVideoCall();
 
-            // createOffer로 수신자에게 전달할 SDP 생성
+            // createOffer로 수신자에게 전달할 offer SDP 생성
             const offer = await webrtc.createOffer();
             await webrtc.setLocalDescription(offer);
             sendMessageToSignallingServer({
