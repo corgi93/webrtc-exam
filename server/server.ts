@@ -1,4 +1,4 @@
-// it's easiest to share typedefs as an ambient declaration file
+// reference로 파일 공유 - 아니면 모듈로 export해서 import해서 가져와야함. 보통 type정의를 위해 사용
 /// <reference path="./types/message.d.ts" />
 
 // signaling server - using websocket (express)
@@ -6,7 +6,6 @@ import * as express from 'express';
 import * as expressWs from 'express-ws';
 import * as WebSocket from 'ws';
 import { createServer } from 'http';
-// import * as Message from './message';
 
 // 유저 인터페이스. WebSocket객체와 이름을 담음
 interface User {
@@ -99,7 +98,7 @@ function handleSocketConnection(socket: WebSocket): void {
         console.log(socket);
         console.log(json);
         handleMessage(socket, json);
-    });
+    }); 
 
     socket.addEventListener('close', () => {
         // 유저 리스트에서 유저 삭제

@@ -24,12 +24,17 @@ function showVideoCall() {
 
 let otherPerson;
 const username = window.prompt('당신 이름이 뭔가요?', `user${Math.floor(Math.random()*100)}`);
+const localUserName = document.getElementById('local-user-name');
+localUserName.innerHTML = username;
+console.log('이름 : ' + username);
+
+
 const socketUrl = `ws://${location.host}/ws`;
 // webSocket 객체 생성
 const socket = new WebSocket(socketUrl);
 
 /** 
- *  소켓으로 메세지 전송
+ *  signaling server에 소켓으로 메세지 전송
     @param {WebSocketMessage} message : 보낼 메세지
 */
 function sendMessageToSignallingServer(message) {
@@ -45,6 +50,7 @@ socket.addEventListener('open', () => {
     });
 });
 
+// 3. 'message' 핸들러 추가. 시그널링 채널이 다른 peer로 부터 받은 message를 응답하기 위해 이벤트핸들러 등록
 socket.addEventListener('message', (event) => {
     const message = JSON.parse(event.data.toString());
     handleMessage(message);
@@ -62,7 +68,7 @@ async function handleMessage(message) {
     switch (message.channel) {
         case "start_call":
             console.log(message);
-            console.log(`${message.otherPerson}에게 전화 요청을 받음`);
+            console.log(`${message.otherPerson}에게 전화 응답을 받음`);
             otherPerson = message.otherPerson;
             showVideoCall();
 
@@ -106,6 +112,7 @@ async function handleMessage(message) {
     }
 }
 
+// peer connection 객체 생성
 const webrtc = new RTCPeerConnection({
     iceServers: [{
         urls: [
@@ -114,7 +121,7 @@ const webrtc = new RTCPeerConnection({
     }, ],
 });
 
-// icecandidate 이벤트 리스터
+// 1. icecandidate 이벤트 리스터. - 
 webrtc.addEventListener('icecandidate', (event) => {
     // event의 candidate가 없으면 그냥 return
     if (!event.candidate) {
@@ -128,29 +135,36 @@ webrtc.addEventListener('icecandidate', (event) => {
     });
 });
 
+// track 이벤트 추가
 webrtc.addEventListener("track", (event) => {
     /** @type {HTMLVideoElement} */
     const remoteVideo = document.getElementById("remote-video");
     remoteVideo.srcObject = event.streams[0];
 });
 
-// user에게 미디어 받기
+// 교환할 미디어 제약 정보(constraint)
 mediaConstraint = {
     video: true,
     audio: true
 }
-navigator.mediaDevices.getUserMedia(mediaConstraint).then((localStream) => {
+
+// 1. 미디어 장치 추가
+window.navigator.mediaDevices.getUserMedia(mediaConstraint).then((localStream) => {
     /** @type {HTMLVideoElement} . video 엘리먼트 가져와 srcObject로 localStream 받아오기 */
+
     const localVideo = document.getElementById("local-video");
     localVideo.srcObject = localStream;
 
     for (const track of localStream.getTracks()) {
+        console.log(track);
         webrtc.addTrack(track, localStream);
     }
 });
 
+const remoteUserName = document.getElementById('remote-user-name');
 callButton.addEventListener('click', async() => {
     otherPerson = prompt('누구에게 전화 요청을 할 것입니까??');
+    remoteUserName.innerHTML = otherPerson;
 
     showVideoCall();
     sendMessageToSignallingServer({
